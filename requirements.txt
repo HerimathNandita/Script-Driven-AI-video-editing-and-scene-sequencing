@@ -1,0 +1,8 @@
+Flask==3.0.0
+opencv-python-headless
+moviepy
+nltk
+spacy
+numpy
+SpeechRecognition
+scikit-learn

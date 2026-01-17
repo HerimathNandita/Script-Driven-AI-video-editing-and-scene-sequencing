@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Film Editor | Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Film Editor</h1>
+            <p>Automated Video Production Studio</p>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <main class="wizard-container">
+            <!-- Step 1: Script -->
+            <section id="step-1" class="wizard-step active">
+                <div class="card">
+                    <div class="upload-icon">📝</div>
+                    <h2>Step 1: The Script</h2>
+                    <p>Upload a file OR type your script manually.</p>
+                    
+                    <!-- Dual Input Area -->
+                    <div class="dual-input-container">
+                        <div class="input-option">
+                            <label>Option A: Upload File</label>
+                            <div class="input-area">
+                                <input type="file" id="script-input" accept=".txt,.pdf" onchange="handleScriptSelect()">
+                                <div id="script-label">Click to Upload Script (TXT)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="divider">OR</div>
+                        
+                        <div class="input-option">
+                            <label>Option B: Manual Entry</label>
+                            <textarea id="script-text-area" placeholder="TYPE YOUR SCRIPT HERE...
+Scene 1: Happy Morning
+She smiled at the sun.
+..." style="width: 100%; height: 150px; background: #000; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 8px; font-family: monospace;"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div id="script-preview" class="scene-list hidden"></div>
+                    
+                    <div class="nav-buttons" style="justify-content: flex-end;">
+                        <button id="btn-step1-next" class="btn btn-primary" onclick="nextStep(2)">Next: Upload Video →</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Step 2: Media -->
+            <section id="step-2" class="wizard-step">
+                <div class="card">
+                    <div class="upload-icon">🎬</div>
+                    <h2>Step 2: The Footage</h2>
+                    <p>Upload your raw video clips. We'll match them to your scenes.</p>
+                    
+                    <div class="input-area">
+                        <input type="file" id="video-input" multiple accept="video/*" onchange="handleVideoSelect()">
+                        <div id="video-label">Click to Upload Videos (MP4, MOV)</div>
+                    </div>
+                    
+                    <div id="video-preview" class="scene-list hidden"></div>
+                    
+                    <div class="nav-buttons">
+                        <button class="btn" onclick="showStep(1)">← Back</button>
+                        <button id="btn-step2-next" class="btn btn-primary" onclick="nextStep(3)" disabled>Next: Director's Settings →</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 3: Director's Console (NEW) -->
+            <section id="step-3" class="wizard-step">
+                <div class="card">
+                    <div class="upload-icon">🧠</div>
+                    <h2>Step 3: Director's Console</h2>
+                    <p>Customize how the AI interprets your film.</p>
+                    
+                    <div class="preferences-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left; margin-bottom: 2rem;">
+                        <!-- Mood -->
+                        <div class="pref-box" style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                            <label style="display: block; color: var(--accent-color); font-weight: bold; margin-bottom: 1rem;">Film Mood</label>
+                            <select id="pref-mood" style="width: 100%; padding: 0.8rem; background: #000; color: #fff; border: 1px solid #444; border-radius: 8px;">
+                                <option value="balanced">Balanced (Default)</option>
+                                <option value="cinematic">Cinematic Drama</option>
+                                <option value="fast">Fast Paced / Action</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Pacing -->
+                        <div class="pref-box" style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                            <label style="display: block; color: var(--secondary-color); font-weight: bold; margin-bottom: 1rem;">Edit Pacing</label>
+                            <select id="pref-pacing" style="width: 100%; padding: 0.8rem; background: #000; color: #fff; border: 1px solid #444; border-radius: 8px;">
+                                <option value="normal">Standard Cut</option>
+                                <option value="tight">Tight (Rapid)</option>
+                                <option value="slow">Slow (Atmospheric)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn" onclick="showStep(2)">← Back</button>
+                        <button class="btn btn-primary" onclick="nextStep(4)">Next: Generate →</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Step 4: Generate (Renamed from 3) -->
+            <section id="step-4" class="wizard-step">
+                <div class="card">
+                    <div class="upload-icon">✨</div>
+                    <h2>Step 4: Studio Magic</h2>
+                    <p>Ready to assemble your rough cut?</p>
+                    
+                    <div style="margin: 2rem 0;">
+                        <button id="generate-btn" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1.2rem;" onclick="generateEdit()">
+                            Start Rendering
+                        </button>
+                    </div>
+
+                    <div id="loading" class="hidden">
+                        <p style="color: var(--accent-color); font-weight: bold; margin-bottom: 1rem;">AI Composition Engine Running...</p>
+                        <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;">
+                            <div style="width: 50%; height: 100%; background: var(--accent-color); animation: pulse 1.5s infinite ease-in-out;"></div>
+                        </div>
+                        <p id="log-output" style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem; text-align: left; padding: 1rem; background: rgba(0,0,0,0.5); border-radius: 8px;">
+                            [System] Initializing modules...
+                        </p>
+                    </div>
+                    
+                    <div id="output-result" class="result-box" style="margin-top: 2rem;"></div>
+                    
+                    <div class="nav-buttons">
+                        <button class="btn" onclick="showStep(3)">← Back</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <style>
+        @keyframes pulse {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+    </style>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
